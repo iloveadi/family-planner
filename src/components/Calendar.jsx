@@ -229,9 +229,12 @@ function MonthSection({ monthDate, events, onDayClick, onEventClick, todayRef })
                                     <div
                                         key={event.id}
                                         onClick={(e) => onEventClick(e, event)}
-                                        className={`text-[11px] px-2 py-1 rounded-lg truncate text-white font-medium shadow-sm hover:opacity-80 active:scale-95 transition-all ${event.color}`}
+                                        className={`text-[11px] px-2 py-1 rounded-lg text-white font-medium shadow-sm hover:opacity-80 active:scale-95 transition-all ${event.color} cursor-pointer min-h-[24px]`}
                                     >
-                                        {event.title}
+                                        <div className="flex flex-col leading-tight break-words whitespace-normal">
+                                            {event.time && <span className="text-[9px] opacity-80 mb-0.5">{event.time}</span>}
+                                            <span>{event.title}</span>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
