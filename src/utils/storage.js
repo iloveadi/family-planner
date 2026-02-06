@@ -6,10 +6,22 @@ const COLLECTION_NAME = 'events';
 export const fetchEvents = async () => {
     try {
         const querySnapshot = await getDocs(collection(db, COLLECTION_NAME));
-        return querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+        return querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            // Convert Firestore Timestamp to ISO string
+            let date = data.date;
+            if (date && typeof date.toDate === 'function') {
+                date = date.toDate().toISOString();
+            } else if (date instanceof Date) {
+                date = date.toISOString();
+            }
+
+            return {
+                id: doc.id,
+                ...data,
+                date: date
+            };
+        });
     } catch (error) {
         console.error('Error fetching events:', error);
         return [];
