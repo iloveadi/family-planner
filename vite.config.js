@@ -19,9 +19,9 @@ export default defineConfig({
         start_url: '/family-planner/',
         icons: [
           {
-            src: 'icon.svg',
+            src: 'icon.png',
             sizes: '512x512',
-            type: 'image/svg+xml',
+            type: 'image/png',
             purpose: 'any maskable'
           }
         ]
