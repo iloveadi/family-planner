@@ -182,7 +182,13 @@ function MonthSection({ monthDate, events, onDayClick, onEventClick, todayRef })
                 ))}
 
                 {days.map((day, idx) => {
-                    const dayEvents = events.filter(e => isSameDay(new Date(e.date), day));
+                    const dayEvents = events
+                        .filter(e => isSameDay(new Date(e.date), day))
+                        .sort((a, b) => {
+                            if (!a.time) return 1; // Events without time go last
+                            if (!b.time) return -1;
+                            return a.time.localeCompare(b.time);
+                        });
                     const isSunday = getDay(day) === 0;
                     const isSaturday = getDay(day) === 6;
                     const isToday = isSameDay(day, new Date());
