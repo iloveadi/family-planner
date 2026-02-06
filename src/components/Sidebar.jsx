@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ExternalLink, Globe, Key, BookOpen, Instagram, Facebook, Landmark } from 'lucide-react';
+import { X, ExternalLink, Globe, Key, BookOpen, Instagram, Facebook, Landmark, Calendar } from 'lucide-react';
 
 // Custom SKKU Ginkgo Leaf Icon
 const SkkuIcon = ({ className }) => (
@@ -14,8 +14,9 @@ const LINK_SECTIONS = [
     {
         title: '성균관대학교',
         items: [
-            { icon: <Key className="w-5 h-5 text-amber-500" />, title: '킹고ID 로그인', url: 'https://login.skku.edu/' },
+            { icon: <Key className="w-5 h-5 text-amber-500" />, title: '킹고ID 로그인', url: 'https://login.skku.edu/?retUrl=kc213u9an72n4n33c5l9' },
             { icon: <BookOpen className="w-5 h-5 text-emerald-600" />, title: '사범대학', url: 'https://coe.skku.edu/coe/index.do' },
+            { icon: <Calendar className="w-5 h-5 text-purple-500" />, title: '학사일정', url: 'https://www.skku.edu/skku/edu/bachelor/ca_de_schedule.do' },
             { icon: <SkkuIcon className="w-5 h-5 text-[#8DC63F]" />, title: '학교 홈페이지', url: 'https://www.skku.edu/' },
             { icon: <Instagram className="w-5 h-5 text-pink-600" />, title: '인스타그램', url: 'https://www.instagram.com/skku.official/' },
             { icon: <Facebook className="w-5 h-5 text-blue-800" />, title: '페이스북', url: 'https://facebook.com/sungkyunkwanuniversity1398/?locale=ko_KR' },
