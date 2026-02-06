@@ -158,8 +158,8 @@ function MonthSection({ monthDate, events, onDayClick, onEventClick, todayRef })
 
     return (
         <div className="mb-8 mx-4 bg-white rounded-3xl shadow-sm border border-stone-100">
-            {/* Sticky Header: Month + Weekdays */}
-            <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-stone-100 rounded-t-3xl shadow-sm">
+            {/* Header: Month + Weekdays (Not Sticky) */}
+            <div className="bg-white/95 border-b border-stone-100 rounded-t-3xl shadow-sm">
                 <div className="flex items-center justify-center px-6 pt-6 pb-4">
                     <span className="inline-block px-6 py-2 rounded-full bg-indigo-50 text-indigo-900 text-lg font-extrabold shadow-sm border border-indigo-100">
                         {format(monthDate, 'yyyy년 M월', { locale: ko })}
