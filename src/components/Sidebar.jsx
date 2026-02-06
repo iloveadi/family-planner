@@ -1,8 +1,17 @@
 import React from 'react';
 import { X, ExternalLink, Globe, ShoppingCart, Stethoscope } from 'lucide-react';
 
+// Custom SKKU Ginkgo Leaf Icon
+const SkkuIcon = ({ className }) => (
+    <svg viewBox="0 0 100 100" className={className} fill="currentColor">
+        {/* Stylized Ginkgo Leaf / SKKU logo shape approximation */}
+        <path d="M50 85 C50 85 20 60 20 35 C20 15 35 5 50 15 C65 5 80 15 80 35 C80 60 50 85 50 85 Z M50 85 L50 45" stroke="currentColor" strokeWidth="8" strokeLinecap="round" fill="none" />
+        <path d="M25 35 Q50 5 75 35" stroke="currentColor" strokeWidth="8" strokeLinecap="round" fill="none" />
+    </svg>
+);
+
 const USEFUL_LINKS = [
-    { id: 1, title: '성균관대학교', url: 'https://www.skku.edu', icon: <Globe className="w-5 h-5 text-green-600" /> },
+    { id: 1, title: '성균관대학교', url: 'https://www.skku.edu', icon: <SkkuIcon className="w-5 h-5 text-[#8DC63F]" /> },
 ];
 
 function Sidebar({ isOpen, onClose }) {
