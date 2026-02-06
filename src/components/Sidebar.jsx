@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ExternalLink, Globe, ShoppingCart, Stethoscope } from 'lucide-react';
+import { X, ExternalLink, Globe, Key, BookOpen, Instagram, Facebook, Landmark } from 'lucide-react';
 
 // Custom SKKU Ginkgo Leaf Icon
 const SkkuIcon = ({ className }) => (
@@ -10,8 +10,23 @@ const SkkuIcon = ({ className }) => (
     </svg>
 );
 
-const USEFUL_LINKS = [
-    { id: 1, title: '성균관대학교', url: 'https://www.skku.edu', icon: <SkkuIcon className="w-5 h-5 text-[#8DC63F]" /> },
+const LINK_SECTIONS = [
+    {
+        title: '성균관대학교',
+        items: [
+            { icon: <Key className="w-5 h-5 text-amber-500" />, title: '킹고ID 로그인', url: 'https://login.skku.edu/' },
+            { icon: <BookOpen className="w-5 h-5 text-emerald-600" />, title: '사범대학', url: 'https://coe.skku.edu/coe/index.do' },
+            { icon: <SkkuIcon className="w-5 h-5 text-[#8DC63F]" />, title: '학교 홈페이지', url: 'https://www.skku.edu/' },
+            { icon: <Instagram className="w-5 h-5 text-pink-600" />, title: '인스타그램', url: 'https://www.instagram.com/skku.official/' },
+            { icon: <Facebook className="w-5 h-5 text-blue-800" />, title: '페이스북', url: 'https://facebook.com/sungkyunkwanuniversity1398/?locale=ko_KR' },
+        ]
+    },
+    {
+        title: '유용한 사이트',
+        items: [
+            { icon: <Landmark className="w-5 h-5 text-indigo-600" />, title: '한국장학재단', url: 'https://www.kosaf.go.kr/ko/main.do' },
+        ]
+    }
 ];
 
 function Sidebar({ isOpen, onClose }) {
@@ -24,35 +39,42 @@ function Sidebar({ isOpen, onClose }) {
             />
 
             {/* Sidebar Panel */}
-            <div className={`fixed top-0 right-0 h-full w-64 bg-white shadow-2xl z-50 transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                <div className="p-4 border-b flex justify-between items-center bg-gray-50">
-                    <h2 className="text-lg font-bold text-gray-800">가족 링크</h2>
-                    <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full">
+            <div className={`fixed top-0 right-0 h-full w-72 bg-white shadow-2xl z-50 transform transition-transform duration-300 ${isOpen ? 'translate-x-0' : 'translate-x-full'} overflow-y-auto`}>
+                <div className="p-5 border-b flex justify-between items-center bg-gray-50 sticky top-0">
+                    <h2 className="text-xl font-bold text-gray-800">바로가기</h2>
+                    <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
                         <X className="w-6 h-6 text-gray-600" />
                     </button>
                 </div>
 
-                <div className="p-4 space-y-3">
-                    {USEFUL_LINKS.map(link => (
-                        <a
-                            key={link.id}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow hover:bg-gray-50"
-                        >
-                            <div className="p-2 bg-gray-100 rounded-lg mr-3">
-                                {link.icon}
+                <div className="p-5 space-y-8">
+                    {LINK_SECTIONS.map((section, idx) => (
+                        <div key={idx}>
+                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 px-1">{section.title}</h3>
+                            <div className="space-y-2">
+                                {section.items.map((link, linkIdx) => (
+                                    <a
+                                        key={linkIdx}
+                                        href={link.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md hover:bg-indigo-50 hover:border-indigo-100 transition-all group"
+                                    >
+                                        <div className="p-2 bg-gray-50 rounded-lg mr-3 group-hover:bg-white transition-colors">
+                                            {link.icon}
+                                        </div>
+                                        <div className="flex-1">
+                                            <span className="font-semibold text-gray-700 group-hover:text-indigo-700">{link.title}</span>
+                                        </div>
+                                        <ExternalLink className="w-4 h-4 text-gray-300 group-hover:text-indigo-300" />
+                                    </a>
+                                ))}
                             </div>
-                            <div className="flex-1">
-                                <span className="font-semibold text-gray-700 block">{link.title}</span>
-                            </div>
-                            <ExternalLink className="w-4 h-4 text-gray-400" />
-                        </a>
+                        </div>
                     ))}
                 </div>
 
-                <div className="absolute bottom-0 w-full p-4 bg-gray-50 border-t">
+                <div className="p-4 bg-gray-50 border-t mt-auto">
                     <p className="text-xs text-center text-gray-400">Family Planner v1.0</p>
                 </div>
             </div>
