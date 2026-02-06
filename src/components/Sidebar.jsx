@@ -51,7 +51,12 @@ function Sidebar({ isOpen, onClose }) {
                 <div className="p-5 space-y-8">
                     {LINK_SECTIONS.map((section, idx) => (
                         <div key={idx}>
-                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 px-1">{section.title}</h3>
+                            <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-3 px-1 flex items-center gap-2">
+                                {section.title === '성균관대학교' && (
+                                    <img src="/family-planner/icon.png" alt="logo" className="w-5 h-5 object-contain" />
+                                )}
+                                {section.title}
+                            </h3>
                             <div className="space-y-2">
                                 {section.items.map((link, linkIdx) => (
                                     <a
