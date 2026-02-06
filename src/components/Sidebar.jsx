@@ -2,9 +2,7 @@ import React from 'react';
 import { X, ExternalLink, Globe, ShoppingCart, Stethoscope } from 'lucide-react';
 
 const USEFUL_LINKS = [
-    { id: 1, title: '학교 홈페이지', url: 'https://www.google.com/search?q=school', icon: <Globe className="w-5 h-5 text-blue-500" /> },
-    { id: 2, title: '이마트몰', url: 'https://emart.ssg.com/', icon: <ShoppingCart className="w-5 h-5 text-yellow-500" /> },
-    { id: 3, title: '소아과 예약', url: 'https://www.google.com/search?q=hospital', icon: <Stethoscope className="w-5 h-5 text-red-500" /> },
+    { id: 1, title: '성균관대학교', url: 'https://www.skku.edu', icon: <Globe className="w-5 h-5 text-green-600" /> },
 ];
 
 function Sidebar({ isOpen, onClose }) {
