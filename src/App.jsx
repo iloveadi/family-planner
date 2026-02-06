@@ -5,22 +5,22 @@ import Sidebar from './components/Sidebar';
 import { Menu, LogOut } from 'lucide-react';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    // Check localStorage for persisted session
+    const savedUser = localStorage.getItem('currentUser');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-  // Check storage for existing session (optional, for now we can just stay in memory or re-login)
-  // implementing basic persistence for convenience if needed later, but sticking to simple flow first.
 
   const handleLogin = (user) => {
     setCurrentUser(user);
-    // You might want to save to localStorage here if you want persistent login
-    // localStorage.setItem('currentUser', JSON.stringify(user));
+    localStorage.setItem('currentUser', JSON.stringify(user));
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
     setIsSidebarOpen(false);
-    // localStorage.removeItem('currentUser');
+    localStorage.removeItem('currentUser');
   };
 
   if (!currentUser) {
