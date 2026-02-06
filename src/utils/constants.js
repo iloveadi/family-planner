@@ -5,7 +5,7 @@ export const FAMILY_MEMBERS = [
         color: 'bg-emerald-400',
         hoverColor: 'hover:bg-emerald-500',
         avatar: '👧',
-        password: '333'
+        password: '1201'
     },
     {
         id: 'mom',
@@ -13,7 +13,7 @@ export const FAMILY_MEMBERS = [
         color: 'bg-indigo-400',
         hoverColor: 'hover:bg-indigo-500',
         avatar: '👩',
-        password: '222'
+        password: '0513'
     },
     {
         id: 'dad',
