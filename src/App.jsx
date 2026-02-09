@@ -9,13 +9,37 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [viewMode, setViewMode] = useState('list'); // 'list' | 'month'
 
+  useEffect(() => {
+    // Check for existing session
+    const storedUser = localStorage.getItem('familyPlannerUser');
+    const storedTimestamp = localStorage.getItem('familyPlannerLoginTime');
+
+    if (storedUser && storedTimestamp) {
+      const now = new Date().getTime();
+      const loginTime = parseInt(storedTimestamp, 10);
+      const thirtyMinutes = 30 * 60 * 1000;
+
+      if (now - loginTime < thirtyMinutes) {
+        setCurrentUser(JSON.parse(storedUser));
+      } else {
+        // Session expired
+        localStorage.removeItem('familyPlannerUser');
+        localStorage.removeItem('familyPlannerLoginTime');
+      }
+    }
+  }, []);
+
   const handleLogin = (user) => {
     setCurrentUser(user);
+    localStorage.setItem('familyPlannerUser', JSON.stringify(user));
+    localStorage.setItem('familyPlannerLoginTime', new Date().getTime().toString());
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
     setIsSidebarOpen(false);
+    localStorage.removeItem('familyPlannerUser');
+    localStorage.removeItem('familyPlannerLoginTime');
   };
 
   if (!currentUser) {
@@ -24,7 +48,7 @@ function App() {
 
   return (
     <div className="h-screen flex flex-col relative overflow-hidden">
-      <header className="px-4 py-3 bg-white shadow-sm flex justify-between items-center z-30 border-b">
+      <header className="px-4 py-3 bg-white shadow-sm flex justify-between items-center z-50 border-b sticky top-0">
         <div className="flex items-center gap-3 min-w-0">
           <span className="text-2xl">{currentUser.avatar}</span>
           <h1 className="font-bold text-lg text-gray-800 tracking-tight whitespace-nowrap truncate">{currentUser.name}의 플래너</h1>
