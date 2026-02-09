@@ -47,8 +47,8 @@ function App() {
   }
 
   return (
-    <div className="h-screen flex flex-col relative overflow-hidden">
-      <header className="px-4 py-3 bg-white shadow-sm flex justify-between items-center z-50 border-b sticky top-0">
+    <div className="fixed inset-0 h-[100dvh] flex flex-col relative overflow-hidden bg-white">
+      <header className="px-4 py-3 bg-white shadow-sm flex justify-between items-center z-50 border-b flex-shrink-0">
         <div className="flex items-center gap-3 min-w-0">
           <span className="text-2xl">{currentUser.avatar}</span>
           <h1 className="font-bold text-lg text-gray-800 tracking-tight whitespace-nowrap truncate">{currentUser.name}의 플래너</h1>

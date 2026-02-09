@@ -14,6 +14,7 @@ function Calendar({ currentUser, viewMode }) {
 
     // Refs for scrolling
     const todayRef = useRef(null);
+    const scrollContainerRef = useRef(null);
 
     useEffect(() => {
         // Initialize with current month + 12 future months
@@ -31,9 +32,14 @@ function Calendar({ currentUser, viewMode }) {
         };
         loadEvents();
 
-        // Auto-scroll to today after a slight delay to ensure rendering
+        // Auto-scroll to today using scrollTop to prevent body scrolling
         setTimeout(() => {
-            todayRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (todayRef.current && scrollContainerRef.current) {
+                const container = scrollContainerRef.current;
+                const element = todayRef.current;
+                const top = element.offsetTop - (container.clientHeight / 2) + (element.clientHeight / 2);
+                container.scrollTo({ top, behavior: 'smooth' });
+            }
         }, 500);
     }, []);
 
@@ -67,10 +73,20 @@ function Calendar({ currentUser, viewMode }) {
             }
             setMonths(initMonths);
             setTimeout(() => {
-                todayRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (todayRef.current && scrollContainerRef.current) {
+                    const container = scrollContainerRef.current;
+                    const element = todayRef.current;
+                    const top = element.offsetTop - (container.clientHeight / 2) + (element.clientHeight / 2);
+                    container.scrollTo({ top, behavior: 'smooth' });
+                }
             }, 100);
         } else {
-            todayRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (todayRef.current && scrollContainerRef.current) {
+                const container = scrollContainerRef.current;
+                const element = todayRef.current;
+                const top = element.offsetTop - (container.clientHeight / 2) + (element.clientHeight / 2);
+                container.scrollTo({ top, behavior: 'smooth' });
+            }
         }
     };
 
@@ -105,7 +121,10 @@ function Calendar({ currentUser, viewMode }) {
     };
 
     return (
-        <div className="h-full overflow-y-auto bg-stone-50 pb-20 relative parent-scroll-container text-stone-700 font-sans">
+        <div
+            ref={scrollContainerRef}
+            className="h-full overflow-y-auto bg-stone-50 pb-20 relative parent-scroll-container text-stone-700 font-sans"
+        >
             {/* Floating Today Button */}
             <button
                 onClick={handleGoToToday}
