@@ -78,41 +78,15 @@ function EventModal({ isOpen, onClose, onSave, onDelete, selectedDate, currentUs
                         <label className="block text-sm font-medium text-gray-700 mb-1">시간 (선택)</label>
                         <div className="flex gap-2">
                             <select
-                                value={parseInt(time.split(':')[0]) >= 12 ? 'PM' : 'AM'}
-                                onChange={(e) => {
-                                    const newAmpm = e.target.value;
-                                    let [h, m] = time.split(':');
-                                    let hour = parseInt(h);
-                                    if (newAmpm === 'PM' && hour < 12) hour += 12;
-                                    if (newAmpm === 'AM' && hour >= 12) hour -= 12;
-                                    setTime(`${hour.toString().padStart(2, '0')}:${m}`);
-                                }}
-                                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-                            >
-                                <option value="AM">오전</option>
-                                <option value="PM">오후</option>
-                            </select>
-                            <select
-                                value={(() => {
-                                    let h = parseInt(time.split(':')[0]);
-                                    if (h === 0) return 12;
-                                    if (h > 12) return h - 12;
-                                    return h;
-                                })()}
+                                value={parseInt(time.split(':')[0])}
                                 onChange={(e) => {
                                     const newHour = parseInt(e.target.value);
-                                    let [currentH, m] = time.split(':');
-                                    let isPm = parseInt(currentH) >= 12;
-                                    let finalH = newHour;
-                                    if (isPm && newHour < 12) finalH += 12;
-                                    if (!isPm && newHour === 12) finalH = 0; // 12 AM
-                                    if (isPm && newHour === 12) finalH = 12; // 12 PM
-
-                                    setTime(`${finalH.toString().padStart(2, '0')}:${m}`);
+                                    let [_, m] = time.split(':');
+                                    setTime(`${newHour.toString().padStart(2, '0')}:${m}`);
                                 }}
                                 className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                             >
-                                {Array.from({ length: 12 }, (_, i) => i + 1).map(h => (
+                                {Array.from({ length: 24 }, (_, i) => i).map(h => (
                                     <option key={h} value={h}>{h}시</option>
                                 ))}
                             </select>
