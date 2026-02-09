@@ -43,6 +43,20 @@ function Calendar({ currentUser, viewMode }) {
         }, 500);
     }, []);
 
+    // Auto-scroll when switching to month view
+    useEffect(() => {
+        if (viewMode === 'month') {
+            setTimeout(() => {
+                if (todayRef.current && scrollContainerRef.current) {
+                    const container = scrollContainerRef.current;
+                    const element = todayRef.current;
+                    const top = element.offsetTop - (container.clientHeight / 2) + (element.clientHeight / 2);
+                    container.scrollTo({ top, behavior: 'smooth' });
+                }
+            }, 300); // Slight delay to allow layout to settle
+        }
+    }, [viewMode]);
+
     const handleLoadMore = () => {
         const lastMonth = months[months.length - 1];
         const newMonths = [];
@@ -349,7 +363,7 @@ function MonthSection({ monthDate, events, onDayClick, onEventClick, todayRef, v
                                             key={event.id}
                                             onClick={(e) => onEventClick(e, event)}
                                             className={`
-                                                text-[9px] sm:text-[10px] px-1 py-0.5 rounded text-white font-medium shadow-sm 
+                                                text-[7px] sm:text-[10px] px-1 py-0.5 rounded text-white font-medium shadow-sm 
                                                 truncate whitespace-nowrap opacity-90 hover:opacity-100 leading-tight
                                                 ${event.color}
                                             `}
