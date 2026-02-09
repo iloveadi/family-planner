@@ -25,23 +25,23 @@ function App() {
   return (
     <div className="h-screen flex flex-col relative overflow-hidden">
       <header className="px-4 py-3 bg-white shadow-sm flex justify-between items-center z-30 border-b">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <span className="text-2xl">{currentUser.avatar}</span>
-          <h1 className="font-bold text-lg text-gray-800 tracking-tight">{currentUser.name}의 플래너</h1>
+          <h1 className="font-bold text-lg text-gray-800 tracking-tight whitespace-nowrap truncate">{currentUser.name}의 플래너</h1>
 
           <button
             onClick={() => setViewMode(viewMode === 'list' ? 'month' : 'list')}
-            className="ml-2 p-1.5 bg-stone-100 rounded-lg text-stone-600 hover:bg-stone-200 transition-colors flex items-center gap-1.5 text-xs font-semibold px-2.5"
+            className="ml-2 p-1.5 bg-stone-100 rounded-lg text-stone-600 hover:bg-stone-200 transition-colors flex items-center gap-1.5 text-xs font-semibold px-2.5 flex-shrink-0"
           >
             {viewMode === 'list' ? (
               <>
                 <CalendarDays className="w-4 h-4" />
-                <span>달력</span>
+                <span className="hidden sm:inline">달력</span>
               </>
             ) : (
               <>
                 <LayoutList className="w-4 h-4" />
-                <span>리스트</span>
+                <span className="hidden sm:inline">리스트</span>
               </>
             )}
           </button>
