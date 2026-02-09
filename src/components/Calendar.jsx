@@ -5,7 +5,7 @@ import { fetchEvents, createEvent, updateEvent, deleteEvent } from '../utils/sto
 import EventModal from './EventModal';
 import { Calendar as CalendarIcon, RotateCcw } from 'lucide-react';
 
-function Calendar({ currentUser }) {
+function Calendar({ currentUser, viewMode }) {
     const [months, setMonths] = useState([]);
     const [events, setEvents] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -30,6 +30,11 @@ function Calendar({ currentUser }) {
             setEvents(loadedEvents);
         };
         loadEvents();
+
+        // Auto-scroll to today after a slight delay to ensure rendering
+        setTimeout(() => {
+            todayRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 500);
     }, []);
 
     const handleLoadMore = () => {
@@ -44,7 +49,8 @@ function Calendar({ currentUser }) {
     const handleLoadPrevious = () => {
         const firstMonth = months[0];
         const newMonths = [];
-        for (let i = 1; i <= 6; i++) {
+        // Changed to load only 1 previous month
+        for (let i = 1; i <= 1; i++) {
             newMonths.unshift(addMonths(firstMonth, -i));
         }
         setMonths([...newMonths, ...months]);
@@ -109,7 +115,7 @@ function Calendar({ currentUser }) {
                 <CalendarIcon className="w-6 h-6" />
             </button>
 
-            <div className="flex flex-col gap-8 py-4">
+            <div className={`flex flex-col gap-6 py-4 ${viewMode === 'month' ? 'px-2' : ''}`}>
                 <button
                     onClick={handleLoadPrevious}
                     className="mx-4 py-2 bg-white text-stone-400 text-sm rounded-xl hover:bg-stone-100 border border-stone-200"
@@ -125,6 +131,7 @@ function Calendar({ currentUser }) {
                         onDayClick={handleDayClick}
                         onEventClick={handleEventClick}
                         todayRef={todayRef}
+                        viewMode={viewMode}
                     />
                 ))}
 
@@ -149,105 +156,194 @@ function Calendar({ currentUser }) {
     );
 }
 
-function MonthSection({ monthDate, events, onDayClick, onEventClick, todayRef }) {
+function MonthSection({ monthDate, events, onDayClick, onEventClick, todayRef, viewMode }) {
     const start = startOfMonth(monthDate);
     const end = endOfMonth(monthDate);
-    const days = eachDayOfInterval({ start, end });
     const startDayIdx = getDay(start); // 0 = Sunday
+    const days = eachDayOfInterval({ start, end });
     const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
 
     return (
-        <div className="mb-8 mx-4 bg-white rounded-3xl shadow-sm border border-stone-100">
-            {/* Header: Month + Weekdays (Not Sticky) */}
-            <div className="bg-white/95 border-b border-stone-100 rounded-t-3xl shadow-sm">
-                <div className="flex items-center justify-center px-6 pt-6 pb-4">
-                    <span className="inline-block px-6 py-2 rounded-full bg-indigo-50 text-indigo-900 text-lg font-extrabold shadow-sm border border-indigo-100">
-                        {format(monthDate, 'yyyy년 M월', { locale: ko })}
-                    </span>
-                </div>
+        <div className={`mb-4 mx-4 bg-white rounded-3xl shadow-sm border border-stone-100 overflow-hidden ${viewMode === 'list' ? '' : 'min-h-[300px]'}`}>
+            {/* Header: Month Name */}
+            <div className="bg-white/95 border-b border-stone-100 p-4 sticky top-0 z-10 backdrop-blur-sm flex flex-col">
+                <h3 className="text-lg font-extrabold text-indigo-900 ml-2">
+                    {format(monthDate, 'yyyy년 M월', { locale: ko })}
+                </h3>
 
-                <div className="grid grid-cols-7 text-center pb-3 text-sm">
-                    {WEEKDAYS.map((day, idx) => (
-                        <div key={day} className={`font-semibold ${idx === 0 ? 'text-rose-400' : idx === 6 ? 'text-indigo-400' : 'text-stone-400'}`}>
-                            {day}
-                        </div>
-                    ))}
-                </div>
+                {/* Weekday Header for Month View */}
+                {viewMode === 'month' && (
+                    <div className="grid grid-cols-7 text-center pt-3 text-sm">
+                        {WEEKDAYS.map((day, idx) => (
+                            <div key={day} className={`font-semibold ${idx === 0 ? 'text-rose-400' : idx === 6 ? 'text-indigo-400' : 'text-stone-400'}`}>
+                                {day}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
 
-            <div className="grid grid-cols-7">
-                {/* Empty cells for start padding */}
-                {Array.from({ length: startDayIdx }).map((_, i) => (
-                    <div key={`empty-${i}`} className="min-h-[120px] border-b border-r border-stone-50 bg-stone-50/30"></div>
-                ))}
+            {viewMode === 'list' ? (
+                // LIST VIEW
+                <div className="flex flex-col">
+                    {days.map((day) => {
+                        const dayEvents = events
+                            .filter(e => isSameDay(new Date(e.date), day))
+                            .sort((a, b) => {
+                                if (!a.time) return 1;
+                                if (!b.time) return -1;
+                                return a.time.localeCompare(b.time);
+                            });
 
-                {days.map((day, idx) => {
-                    const dayEvents = events
-                        .filter(e => isSameDay(new Date(e.date), day))
-                        .sort((a, b) => {
-                            if (!a.time) return 1; // Events without time go last
-                            if (!b.time) return -1;
-                            return a.time.localeCompare(b.time);
-                        });
-                    const isSunday = getDay(day) === 0;
-                    const isSaturday = getDay(day) === 6;
-                    const isToday = isSameDay(day, new Date());
-                    const dayNum = format(day, 'd');
+                        const dayOfWeekIdx = getDay(day);
+                        const isSunday = dayOfWeekIdx === 0;
+                        const isSaturday = dayOfWeekIdx === 6;
+                        const isToday = isSameDay(day, new Date());
+                        const dayNum = format(day, 'd');
+                        const dayName = WEEKDAYS[dayOfWeekIdx];
 
-                    // Logic to add rounded corners to the bottom-left and bottom-right cells if needed
-                    // For now, simplicity is key. The container has rounded corners, but without overflow hidden, 
-                    // content might bleed if it has background. use last-child logic or just padding.
-                    // Actually, the container `rounded-3xl` + `border` will show the border curve.
-                    // Children backgrounds might bleed slightly at corners if we don't clip.
-                    // But standard cells have white/transparent bg, except `isToday` or hover.
-                    // We can live with minor bleeding or fix it with complex CSS.
-                    // Let's add `overflow-hidden` ONLY to the grid container if needed, but not the whole MonthSection?
-                    // No, sticky needs to be sibling or inside. 
-                    // Best easy fix: Add a wrapper for the grid that respects border radius bottom?
-                    // Or just let it be. The user prioritized functionality (sticky).
+                        const getDayStyles = () => {
+                            if (isToday) return 'bg-amber-50/80 border-l-4 border-l-indigo-500';
+                            if (isSunday) return 'bg-rose-50/40';
+                            if (isSaturday) return 'bg-blue-50/40';
+                            return 'bg-white hover:bg-stone-50';
+                        };
 
-                    return (
-                        <div
-                            key={day.toString()}
-                            ref={isToday ? todayRef : null}
-                            onClick={() => onDayClick(day)}
-                            className={`min-h-[120px] border-b border-r border-stone-50 p-2 relative transition-all cursor-pointer 
-                                ${isToday ? 'bg-indigo-50/30' : 'hover:bg-stone-50'}
-                                ${/* Add rounded corners for the very last cells if strictly required, but standard rect on grid is fine for now */ ''}
-                            `}
-                        >
-                            <div className="flex justify-center mb-1">
-                                <span className={`w-7 h-7 flex items-center justify-center rounded-full text-sm font-bold
-                                    ${isToday
-                                        ? 'bg-indigo-500 text-white shadow-md scale-110'
-                                        : isSunday
+                        return (
+                            <div
+                                key={day.toString()}
+                                ref={isToday ? todayRef : null}
+                                onClick={() => onDayClick(day)}
+                                className={`
+                                    min-h-[70px] p-3 border-b border-stone-100 last:border-b-0
+                                    transition-all cursor-pointer flex flex-row gap-3
+                                    ${getDayStyles()}
+                                `}
+                            >
+                                {/* Date Header: Left Side */}
+                                <div className="flex flex-col items-center justify-start min-w-[50px] pt-1 gap-1">
+                                    <span className={`text-lg font-bold
+                                        ${isToday
+                                            ? 'bg-indigo-600 text-white w-9 h-9 flex items-center justify-center rounded-full shadow-md transform scale-105'
+                                            : isSunday
+                                                ? 'text-rose-600'
+                                                : isSaturday
+                                                    ? 'text-blue-600'
+                                                    : 'text-stone-700'
+                                        }`}
+                                    >
+                                        {dayNum}
+                                    </span>
+                                    <span className={`text-xs font-bold uppercase tracking-wide
+                                        ${isSunday
                                             ? 'text-rose-400'
                                             : isSaturday
-                                                ? 'text-indigo-400'
-                                                : 'text-stone-600'
-                                    }`}>
-                                    {dayNum}
-                                </span>
-                            </div>
-
-                            <div className="flex flex-col gap-1.5 overflow-hidden">
-                                {dayEvents.map(event => (
-                                    <div
-                                        key={event.id}
-                                        onClick={(e) => onEventClick(e, event)}
-                                        className={`text-[11px] px-2 py-1 rounded-lg text-white font-medium shadow-sm hover:opacity-80 active:scale-95 transition-all ${event.color} cursor-pointer min-h-[24px]`}
+                                                ? 'text-blue-400'
+                                                : 'text-stone-400'
+                                        }`}
                                     >
-                                        <div className="flex flex-col leading-tight break-words whitespace-normal">
-                                            {event.time && <span className="text-[9px] opacity-80 mb-0.5">{event.time}</span>}
-                                            <span>{event.title}</span>
-                                        </div>
-                                    </div>
-                                ))}
+                                        {dayName}
+                                    </span>
+                                </div>
+
+                                {/* Events List: Right Side */}
+                                <div className="flex-1 flex flex-col gap-1.5 pt-0.5 min-w-0">
+                                    {dayEvents.length > 0 ? (
+                                        dayEvents.map(event => (
+                                            <div
+                                                key={event.id}
+                                                onClick={(e) => onEventClick(e, event)}
+                                                className={`
+                                                    flex items-center gap-2 px-3 py-2 rounded-xl text-white shadow-sm 
+                                                    hover:opacity-90 active:scale-[0.98] transition-all 
+                                                    ${event.color} cursor-pointer min-w-0 border border-white/20
+                                                `}
+                                            >
+                                                {event.time && (
+                                                    <span className="text-[11px] font-bold opacity-90 bg-black/20 px-1.5 py-0.5 rounded flex-shrink-0">
+                                                        {event.time}
+                                                    </span>
+                                                )}
+                                                <span className="text-sm font-semibold truncate">{event.title}</span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="h-full"></div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
-            </div>
+                        );
+                    })}
+                </div>
+            ) : (
+                // MONTH GRID VIEW
+                <div className="grid grid-cols-7 border-t border-stone-100">
+                    {/* Empty cells for start padding */}
+                    {Array.from({ length: startDayIdx }).map((_, i) => (
+                        <div key={`empty-${i}`} className="min-h-[80px] sm:min-h-[100px] border-b border-r border-stone-50 bg-stone-50/20"></div>
+                    ))}
+
+                    {days.map((day) => {
+                        const dayEvents = events
+                            .filter(e => isSameDay(new Date(e.date), day))
+                            .sort((a, b) => {
+                                if (!a.time) return 1;
+                                if (!b.time) return -1;
+                                return a.time.localeCompare(b.time);
+                            });
+
+                        const dayOfWeekIdx = getDay(day);
+                        const isSunday = dayOfWeekIdx === 0;
+                        const isSaturday = dayOfWeekIdx === 6;
+                        const isToday = isSameDay(day, new Date());
+                        const dayNum = format(day, 'd');
+
+                        return (
+                            <div
+                                key={day.toString()}
+                                ref={isToday ? todayRef : null}
+                                onClick={() => onDayClick(day)}
+                                className={`
+                                    min-h-[80px] sm:min-h-[100px] border-b border-r border-stone-50 p-1 relative transition-colors cursor-pointer
+                                    ${isToday ? 'bg-amber-50' : 'hover:bg-stone-50'}
+                                    ${isSunday ? 'bg-rose-50/10' : ''}
+                                    ${isSaturday ? 'bg-blue-50/10' : ''}
+                                `}
+                            >
+                                <div className="flex justify-center mb-1">
+                                    <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold
+                                        ${isToday
+                                            ? 'bg-indigo-600 text-white shadow-sm'
+                                            : isSunday
+                                                ? 'text-rose-500'
+                                                : isSaturday
+                                                    ? 'text-blue-500'
+                                                    : 'text-stone-600'
+                                        }`}>
+                                        {dayNum}
+                                    </span>
+                                </div>
+
+                                <div className="flex flex-col gap-1 overflow-hidden">
+                                    {dayEvents.map(event => (
+                                        <div
+                                            key={event.id}
+                                            onClick={(e) => onEventClick(e, event)}
+                                            className={`
+                                                text-[10px] px-1.5 py-0.5 rounded text-white font-medium shadow-sm 
+                                                truncate whitespace-nowrap opacity-90 hover:opacity-100
+                                                ${event.color}
+                                            `}
+                                        >
+                                            {event.title}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }

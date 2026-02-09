@@ -2,25 +2,20 @@ import React, { useState, useEffect } from 'react';
 import Auth from './components/Auth';
 import Calendar from './components/Calendar';
 import Sidebar from './components/Sidebar';
-import { Menu, LogOut } from 'lucide-react';
+import { Menu, LogOut, LayoutList, CalendarDays } from 'lucide-react';
 
 function App() {
-  const [currentUser, setCurrentUser] = useState(() => {
-    // Check localStorage for persisted session
-    const savedUser = localStorage.getItem('currentUser');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
+  const [currentUser, setCurrentUser] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [viewMode, setViewMode] = useState('list'); // 'list' | 'month'
 
   const handleLogin = (user) => {
     setCurrentUser(user);
-    localStorage.setItem('currentUser', JSON.stringify(user));
   };
 
   const handleLogout = () => {
     setCurrentUser(null);
     setIsSidebarOpen(false);
-    localStorage.removeItem('currentUser');
   };
 
   if (!currentUser) {
@@ -33,6 +28,23 @@ function App() {
         <div className="flex items-center gap-3">
           <span className="text-2xl">{currentUser.avatar}</span>
           <h1 className="font-bold text-lg text-gray-800 tracking-tight">{currentUser.name}의 플래너</h1>
+
+          <button
+            onClick={() => setViewMode(viewMode === 'list' ? 'month' : 'list')}
+            className="ml-2 p-1.5 bg-stone-100 rounded-lg text-stone-600 hover:bg-stone-200 transition-colors flex items-center gap-1.5 text-xs font-semibold px-2.5"
+          >
+            {viewMode === 'list' ? (
+              <>
+                <CalendarDays className="w-4 h-4" />
+                <span>달력</span>
+              </>
+            ) : (
+              <>
+                <LayoutList className="w-4 h-4" />
+                <span>리스트</span>
+              </>
+            )}
+          </button>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -52,7 +64,7 @@ function App() {
       </header>
 
       <main className="flex-1 overflow-hidden relative">
-        <Calendar currentUser={currentUser} />
+        <Calendar currentUser={currentUser} viewMode={viewMode} />
       </main>
 
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
