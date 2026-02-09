@@ -323,14 +323,14 @@ function MonthSection({ monthDate, events, onDayClick, onEventClick, todayRef, v
                                 ref={isToday ? todayRef : null}
                                 onClick={() => onDayClick(day)}
                                 className={`
-                                    min-h-[80px] sm:min-h-[100px] border-b border-r border-stone-50 p-1 relative transition-colors cursor-pointer
+                                    min-h-[80px] sm:min-h-[100px] border-b border-r border-stone-50 p-0.5 sm:p-1 relative transition-colors cursor-pointer
                                     ${isToday ? 'bg-amber-50' : 'hover:bg-stone-50'}
                                     ${isSunday ? 'bg-rose-50/10' : ''}
                                     ${isSaturday ? 'bg-blue-50/10' : ''}
                                 `}
                             >
-                                <div className="flex justify-center mb-1">
-                                    <span className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold
+                                <div className="flex justify-center mb-0.5 sm:mb-1">
+                                    <span className={`w-5 h-5 sm:w-6 sm:h-6 flex items-center justify-center rounded-full text-[10px] sm:text-xs font-bold
                                         ${isToday
                                             ? 'bg-indigo-600 text-white shadow-sm'
                                             : isSunday
@@ -343,14 +343,14 @@ function MonthSection({ monthDate, events, onDayClick, onEventClick, todayRef, v
                                     </span>
                                 </div>
 
-                                <div className="flex flex-col gap-1 overflow-hidden">
+                                <div className="flex flex-col gap-0.5 sm:gap-1 overflow-hidden">
                                     {dayEvents.map(event => (
                                         <div
                                             key={event.id}
                                             onClick={(e) => onEventClick(e, event)}
                                             className={`
-                                                text-[10px] px-1.5 py-0.5 rounded text-white font-medium shadow-sm 
-                                                truncate whitespace-nowrap opacity-90 hover:opacity-100
+                                                text-[9px] sm:text-[10px] px-1 py-0.5 rounded text-white font-medium shadow-sm 
+                                                truncate whitespace-nowrap opacity-90 hover:opacity-100 leading-tight
                                                 ${event.color}
                                             `}
                                         >
